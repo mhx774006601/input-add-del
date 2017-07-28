@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>点击下拉框，选中的值填充到上边框中，并且可上下同时做删除操作</title>
+<script type="text/javascript" src="jquery-3.1.1.min.js" ></script>
+<style type="text/css">
+	.consultation_input{
+		width:500px;
+		height: 30px;
+		line-height: 30px;
+		border: 1px solid #ccc;
+		margin: 0 auto;
+		border-radius: 4px;
+	}
+	.content{
+		border:1px solid #00B3B7;
+		width:500px;
+		margin:0 auto;
+		display: none;
+	}
+	.search_cont {
+		width: 500px;
+		height: auto;
+		margin: 0 auto;
+		padding:5px;
+	}
+	.search_cont span{
+		cursor: pointer;
+		color: #000;
+		padding: 3px 15px;
+		border:1px solid #00a2d4;
+		border-radius: 4px;
+		line-height: 30px;
+		margin:0 5px;
+	}
+	.search_cont span:hover{
+		background: #00B3B7;
+		border-radius: 4px;
+		color: #ffffff;
+
+	}
+	.inp_other{
+		border:1px solid #ddd;
+		border-radius: 4px;
+		height:28px;
+		line-height: 28px;
+		width:98%;
+		margin: 2px auto;
+		display: none;
+	}
+	.title{
+		line-height: 28px;
+		width:98%;
+		margin: 5px auto;
+		text-align: right;
+	}
+	.title .del{
+		padding:5px;
+		border-radius: 4px;
+		border: 1px solid #ccc;
+		line-height: 28px;
+		margin:5px;
+		cursor: pointer;
+	}
+</style>
+</head>
+<body>
+<div class="consultation_input" contenteditable="true"></div>
+<!--<input type="hidden" id="consultation_val" />-->
+<div class="content">
+	<div class="title"><span class="del">关闭</span></div>
+	<div class="search_cont">
+		<span>不知道</span>
+		<span>耳鸣</span>
+		<span>眼花</span>
+		<span>恶心呕吐</span>
+		<span>尿痛</span>
+		<span>尿急</span>
+		<span>视力模糊</span>
+		<span>体重下降</span>
+		<span>呼吸困难</span>
+		<span>实力模糊</span>
+		<span>无症状</span>
+		<span class="other">其它+</span>
+	</div>
+	<input type="text" class="inp_other" />
+</div>
+
+</body>
+</html>
+<script type="text/javascript">
+$(function(){
+//点击上边输入框显示下拉框
+	function openInp(){
+		$(".consultation_input").click(function(event){
+			$(".content").css('display','block');
+			event.stopPropagation();
+		})
+	}
+	openInp();
+
+
+	//点关闭关闭下拉框
+	$('.title .del').click(function(){
+		$('.content').css('display','none');
+	})
+
+	//添加内容
+	var addAttr=[];//添加的数组
+	function addCon(){
+		$(".search_cont span").click(function(event){
+			event.stopPropagation();
+			var con = $(this).text();
+			if($.inArray(con,addAttr) == -1 || $(this).text()!=="其它+"){
+				addAttr.push(con);//将字符串添加到数组里
+				$(".consultation_input").html(addAttr.join(","));
+			}else{
+				alert(2);
+				addAttr.remove(con);
+				addAttr.splice('其它+',1);
+				$(".consultation_input").html(addAttr.join(","));
+			}
+
+		})
+	}
+	addCon();
+
+	//点击其它，显示输入框
+	$('.other').on('click',function(){
+		$('.inp_other').css('display','block');
+	})
+
+	//删除框里的内容
+/*	$(".consultation_input").keyup(function(e){
+		if(e.keyCode == 8 || e.keyCode == 46){
+			var delText = $(this).text().split(",")//将最终的字符串添加到数组里
+			if(addAttr.length!=delText.length){
+				for(var i=0;i<addAttr.length;i++){
+					if(addAttr[i]!=delText[i]){
+						addAttr.splice(i, 1);
+						break;
+					}
+				}
+				$(this).text(addAttr.join(","));
+
+			}else{
+				for(var i=0;i<delText.length;i++){
+					if($.inArray(delText[i], addAttr) == -1){
+						delText.splice(i, 1);
+						addAttr = delText;
+						$(this).text(delText.join(","));
+					}
+				}
+			}
+
+		}
+
+	})*/
+
+	//对其它 的框进行鼠标删除操作时
+	var otherIndex=-1;//其它 在输入框中的位置，此时无它
+	$(".inp_other").on("keyup",function(e){
+		if(e.keyCode == 8 || e.keyCode == 46){
+			//当我输入内容的时候
+			if(otherIndex>=0){
+				addAttr[otherIndex] = this.value;
+				$(".consultation_input").html(addAttr.join(","));
+			}else{
+				$(".consultation_input").html(addAttr.join(",")+","+this.value);
+			}
+
+		}else{
+			if(otherIndex>=0){
+				addAttr[otherIndex] = this.value;
+				$(".consultation_input").html(addAttr.join(","));
+			}else{
+
+				//第一遍走这，录入值后的结果
+				$(".consultation_input").html(addAttr.join(",")+","+this.value);
+			}
+		}
+
+	})
+
+	//其它 文本框 改变内容的时候
+	$(".inp_other").on("change",function(){
+		if(otherIndex<0){
+			otherIndex = addAttr.length;//取得内容所放进的上边框中的位置
+			addAttr.push(this.value);
+		}
+		if(otherIndex===-2){
+			otherIndex = addAttr.length;
+			addAttr.push(this.value);
+		}
+	})
+
+	//删除最上边框里的内容
+	$(document).on('keyup','.consultation_input',function(e){
+		if(e.keyCode == 8 || e.keyCode == 46){
+			var delAttr = $(this).text().split(",")//将最终的字符串添加到数组里
+			if(addAttr.length!=delAttr.length){
+				for(var i=0;i<addAttr.length;i++){
+					if(addAttr[i]!=delAttr[i]){
+						addAttr.splice(i, 1);
+						break;
+					}
+				}
+				$(this).text(addAttr.join(","));
+
+			}else{
+				for(var i=0;i<delAttr.length;i++){
+					if($.inArray(delAttr[i], addAttr) == -1){
+						if(i==otherIndex){
+							$(".inp_other").val("");
+							otherIndex=-2;
+						}
+						delAttr.splice(i, 1);
+						addAttr = delAttr;
+						$(this).text(delAttr.join(","));
+					}
+				}
+			}
+
+		}
+
+	})
+
+
+
+})
+</script>

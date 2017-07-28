@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title></title>
+<script type="text/javascript" src="jquery-3.1.1.min.js" ></script>
+<style type="text/css">
+.consultation_input{
+	width:500px;
+	height: 30px;
+	line-height: 30px;
+	border: 1px solid #ccc;
+	margin: 0 auto;
+}
+.search_cont {
+	width: 500px;
+	height: auto;
+	margin: 0 auto;
+	display: none;
+	border:2px solid #ddd;
+	background: #f1f1f1;
+}
+.search_cont span{
+	cursor: pointer;
+	color: #000;
+	padding: 3px 15px;
+	border:1px solid #00a2d4;
+	border-radius: 4px;;
+	line-height: 30px;;
+}
+.search_cont span:hover{
+	background: #00B3B7;
+	border-radius: 4px;
+	color: #ffffff;
+}
+</style>
+</head>
+<body>
+<div class="consultation_input" contenteditable="true"></div>
+<!--<input type="hidden" id="consultation_val" />-->
+<div class="search_cont">
+	<span>其他</span>
+	<span>耳鸣</span>
+	<span>眼花</span>
+	<span>恶心呕吐</span>
+	<span>尿痛</span>
+	<span>尿急</span>
+	<span>视力模糊</span>
+	<span>体重下降</span>
+	<span>呼吸困难</span>
+	<span>实力模糊</span>
+	<span>无症状</span>
+	<span>腹泻</span>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+$(function(){
+	$(document).click(function(){
+		$(".search_cont").hide();
+	})
+	$(".consultation_input").click(function(event){
+		$(".search_cont").toggle();
+		event.stopPropagation();
+	})
+//	var allText=[];//获取所有span内容
+//	$(".search_cont span").each(function(){
+//		allText.push($(this).text());
+//	})
+	//添加内容
+	var addAttr=[];//添加的数组
+	$("span").click(function(event){
+		var con = $(this).text();
+		event.stopPropagation();
+		if($.inArray(con,addAttr) == -1){
+			addAttr.push($(this).text());//将字符串添加到数组里
+			$(this).parent().siblings(".consultation_input").html(addAttr.join(","));
+		}else{
+			addAttr.remove(con);
+			$(this).parent().siblings(".consultation_input").html(addAttr.join(","));
+		}
+	})
+
+	//删除框里的内容
+	$(".consultation_input").keyup(function(e){
+		if(e.keyCode == 8 || e.keyCode == 46){
+			var delText = $(this).text().split(",")//将最终的字符串添加到数组里
+			if(addAttr.length!=delText.length){
+				for(var i=0;i<addAttr.length;i++){
+					if(addAttr[i]!=delText[i]){
+						addAttr.splice(i, 1);
+						break;
+					}
+				}
+				$(this).text(addAttr.join(","));
+
+			}else{
+				for(var i=0;i<delText.length;i++){
+					if($.inArray(delText[i], addAttr) == -1){
+						delText.splice(i, 1);
+						addAttr = delText;
+						$(this).text(delText.join(","));
+					}
+				}
+			}
+
+		}
+
+	})
+
+	
+})
+</script>

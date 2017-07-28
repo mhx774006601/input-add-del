@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<script type="text/javascript" src="jquery-3.1.1.min.js" ></script>
+<style>
+*{margin: 0;padding: 0;font-size: 14px;color: #333;}
+.guominInput{width: 710px;border: 1px solid #ccc;margin: 0 auto;min-height: 30px;}
+.guominInput span{display: inline-block;padding: 5px;background: #66CCFF;margin: 0 5px;cursor: pointer;color: #fff;border-radius: 4px;}
+.guominVal{display: none;}
+.guominBox{width: 700px;height: auto;border: 1px solid #ccc;padding: 5px;margin: 0 auto;position: relative;display: none;}
+.guominBox span{margin: 5px;display: inline-block;cursor: pointer;padding: 5px;border-radius: 5px;}
+.hover{background: #6cf;color: #fff;}
+#moreguomin{width: 695px;margin-top: 5px;height: 24px;display: none;}
+.guominBox a.more{position: absolute;right: 10px;bottom: 10px;display: none;color: #66CCFF;cursor: pointer;}
+
+</style>
+</head>
+<body>
+<div class="guominInput" onclick="BoxShow(this)"></div>
+<div class="guominBox">
+	<span onclick="allergicSpan(this)">青霉素类抗生素<input type="hidden" value="101" /></span>
+	<span onclick="allergicSpan(this)" onclick="allergicSpan(this)">磺胺类抗生素<input type="hidden" value="102" /></span>
+	<span onclick="allergicSpan(this)">头孢类抗生素<input type="hidden" value="103" /></span>
+	<span onclick="allergicSpan(this)">含碘药品<input type="hidden" value="104" /></span>
+	<span onclick="allergicSpan(this)">酒精<input type="hidden" value="105" /></span>
+	<span onclick="allergicSpan(this)">镇静麻醉剂<input type="hidden" value="106" /></span>
+	<span onclick="allergicSpan(this)">猪肉<input type="hidden" value="107" /></span>
+	<span onclick="allergicSpan(this)">羊肉<input type="hidden" value="108" /></span>
+	<span onclick="allergicSpan(this)">牛奶<input type="hidden" value="109" /></span>
+	<span onclick="allergicSpan(this)">蛋及蛋制品<input type="hidden" value="110" /></span>
+	<span onclick="allergicSpan(this)">鱼、虾等水产类食品<input type="hidden" value="111" /></span>
+	<span onclick="allergicSpan(this)">鸡、鸭等禽类食品<input type="hidden" value="112" /></span>
+	<span onclick="allergicSpan(this)">水果(包括带壳的果仁)<input type="hidden" value="113" /></span>
+	<span onclick="allergicSpan(this)">植物花粉<input type="hidden" value="114" /></span>
+	<span onclick="allergicSpan(this)">空气粉尘<input type="hidden" value="115" /></span>
+	<span onclick="allergicSpan(this)">动物毛发<input type="hidden" value="116" /></span>
+	<span onclick="allergicSpan(this)">混合性过敏源<input type="hidden" value="117" /></span>
+	<span onclick="moreSpan(this)">其他过敏源<input type="hidden" value="9" /></span>
+	<input type="text" id="moreguomin"/>
+	<a class="more" onclick="addMore(this)">添加</a>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+function BoxShow(obj){
+	$(obj).siblings(".guominBox").show();
+}
+var moreVal;//其他过敏源里的值
+var html='';
+var span_attr=[];
+//过敏源点击效果
+function  allergicSpan(obj){	
+	var valIndex = $(obj).find("input").val();
+	var thisText = $(obj).text();
+	if($(obj).hasClass("hover")){
+		  $(obj).removeClass("hover");
+		  html = "<span onclick='javascript:deleteSpan(this)'>"+thisText+"<i style='margin-left:10px;font-style:normal;color:red'>x</i><input type='hidden' value="+valIndex+" /></span>";
+		  var index = span_attr.indexOf(html);           
+		  span_attr.splice(index,1);
+	}else{
+		$(obj).addClass("hover");		
+		html = "<span onclick='javascript:deleteSpan(this)'>"+thisText+"<i style='margin-left:10px;font-style:normal;color:red'>x</i><input type='hidden' value="+valIndex+" /></span>";
+		span_attr.push(html)
+	}
+	$(".guominInput").html(span_attr);
+}
+//删除输入框里的值
+function deleteSpan(obj){
+	var valIndex = $(obj).find("input").val();
+	var thisText = $(obj).text().substring(0,$(obj).text().indexOf('x'));
+	$(".guominBox").find("span").each(function(){
+		if($(this).find("input").val()==valIndex){
+			$(this).removeClass("hover");
+		}
+	});
+  	html = "<span onclick='javascript:deleteSpan(this)'>"+thisText+"<i style='margin-left:10px;font-style:normal;color:red'>x</i><input type='hidden' value="+valIndex+" /></span>";
+  	var index = span_attr.indexOf(html);           
+  	span_attr.splice(index,1);
+  	$(obj).remove();
+}
+//其他过敏源点击效果
+function moreSpan(obj){	
+	if($(obj).hasClass("hover")){
+		$(obj).removeClass("hover");
+		$("#moreguomin").hide();
+		$(".more").hide();
+	}else{
+		$(obj).addClass("hover");
+		$("#moreguomin").show();
+		$(".more").show();
+	}
+}
+//其他过敏源的input输入框里的值
+function addMore(obj){
+	var moreVal = $("#moreguomin").val();
+	if(!moreVal == ''||!moreVal == null || !moreVal == undefined){
+		html = "<span onclick='javascript:deleteSpan(this)'>"+moreVal+"<i style='margin-left:10px;font-style:normal;color:red'>x</i></span>";
+		span_attr.push(html);
+		$(".guominInput").html(span_attr);
+		$("#moreguomin").val("");
+	}else{
+		alert("添加的内容不能为空");
+		return false;
+	}
+	event.stopPropagation()
+}
+</script>
